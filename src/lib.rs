@@ -44,7 +44,7 @@ fn sha256_hash(buf: &[u8]) -> [u8; 32] {
         .try_into()
         .expect("sha256 is always 32 bytes")
 }
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 struct JsonRpc<T> {
     // jsonrpc: String,
     result: T,
@@ -101,7 +101,10 @@ pub enum Verifier {
 pub mod multi_thread {
     use super::*;
 
-    pub async fn lookup_request(verifier_id: u64, verifier_type: Verifier) -> Result<TorusKeys> {
+    pub async fn lookup_request(
+        verifier_id: &'_ str,
+        verifier_type: Verifier,
+    ) -> Result<TorusKeys> {
         let verifier = match verifier_type {
             Verifier::Twitter => VERIFIER_TWITTER,
             Verifier::Discord => VERIFIER_DISCORD,
@@ -154,7 +157,10 @@ pub mod multi_thread {
 pub mod single_threaded {
     use super::*;
 
-    pub async fn lookup_request(verifier_id: u64, verifier_type: Verifier) -> Result<TorusKeys> {
+    pub async fn lookup_request(
+        verifier_id: &'_ str,
+        verifier_type: Verifier,
+    ) -> Result<TorusKeys> {
         let verifier = match verifier_type {
             Verifier::Twitter => VERIFIER_TWITTER,
             Verifier::Discord => VERIFIER_DISCORD,
