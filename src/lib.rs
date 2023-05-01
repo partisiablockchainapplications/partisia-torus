@@ -27,7 +27,8 @@ const TORUS_ENDPOINTS: [&'static str; 9] = [
     "https://torusnode.ont.io/jrpc",
 ];
 
-const VERIFIER: &'static str = "partisia-twitter-mainnet";
+const VERIFIER_TWITTER: &'static str = "partisia-twitter-mainnet";
+const VERIFIER_DISCORD: &'static str = "partisia-discord";
 
 // the consensus results are None if still pending a result from the rpc call
 type ConsensusResults = [Option<Result<Vec<u8>>>; TORUS_ENDPOINTS.len()];
@@ -38,7 +39,10 @@ fn sha256_hash(buf: &[u8]) -> [u8; 32] {
     // get the hash
     let mut hasher = Sha256::new();
     hasher.update(buf);
-    hasher.finalize().try_into().unwrap()
+    hasher
+        .finalize()
+        .try_into()
+        .expect("sha256 is always 32 bytes")
 }
 #[derive(Debug, Deserialize)]
 struct JsonRpc<T> {
@@ -87,18 +91,27 @@ struct TorusPublicKey {
     y: String,
 }
 
+#[derive(Debug, Clone, Copy)]
+pub enum Verifier {
+    Twitter,
+    Discord,
+}
+
 #[cfg(feature = "multi_thread")]
 pub mod multi_thread {
     use super::*;
 
-    pub async fn id_lookup_request(twitter_id: u64) -> Result<TorusKeys> {
-        let verifier_id = format!("twitter|{}", twitter_id);
+    pub async fn lookup_request(verifier_id: u64, verifier_type: Verifier) -> Result<TorusKeys> {
+        let verifier = match verifier_type {
+            Verifier::Twitter => VERIFIER_TWITTER,
+            Verifier::Discord => VERIFIER_DISCORD,
+        };
         let json_rpc = json!({
           "jsonrpc": "2.0",
           "id": 10,
           "method": "VerifierLookupRequest",
           "params": {
-            "verifier": VERIFIER,
+            "verifier": verifier,
             "verifier_id": verifier_id
           }
         });
@@ -141,14 +154,17 @@ pub mod multi_thread {
 pub mod single_threaded {
     use super::*;
 
-    pub async fn id_lookup_request(twitter_id: u64) -> Result<TorusKeys> {
-        let verifier_id = format!("twitter|{}", twitter_id);
+    pub async fn lookup_request(verifier_id: u64, verifier_type: Verifier) -> Result<TorusKeys> {
+        let verifier = match verifier_type {
+            Verifier::Twitter => VERIFIER_TWITTER,
+            Verifier::Discord => VERIFIER_DISCORD,
+        };
         let json_rpc = json!({
           "jsonrpc": "2.0",
           "id": 10,
           "method": "VerifierLookupRequest",
           "params": {
-            "verifier": VERIFIER,
+            "verifier": verifier,
             "verifier_id": verifier_id
           }
         });
