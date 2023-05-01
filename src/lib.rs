@@ -53,16 +53,16 @@ struct JsonRpc<T> {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct TorusKeys {
-    keys: Vec<TorusKey>,
+    pub keys: Vec<TorusKey>,
 }
 #[derive(Debug, Deserialize, Serialize)]
-struct TorusKey {
-    key_index: String,
+pub struct TorusKey {
+    pub key_index: String,
     #[serde(rename = "pub_key_X")]
-    pub_key_x: String,
+    pub pub_key_x: String,
     #[serde(rename = "pub_key_Y")]
-    pub_key_y: String,
-    address: String,
+    pub pub_key_y: String,
+    pub address: String,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
