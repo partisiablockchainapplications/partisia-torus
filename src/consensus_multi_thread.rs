@@ -27,7 +27,7 @@ where
 
     ensure!(res.status().is_success());
     let v = res.json::<JsonRpc<T>>().await?;
-
+    
     let ser = bincode::serialize(&v.result)?;
     Ok(ser)
 }

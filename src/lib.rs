@@ -57,12 +57,33 @@ pub struct TorusKeys {
 }
 #[derive(Debug, Deserialize, Serialize)]
 pub struct TorusKey {
-    pub key_index: String,
+    key_index: String,
     #[serde(rename = "pub_key_X")]
-    pub pub_key_x: String,
+    pub_key_x: String,
     #[serde(rename = "pub_key_Y")]
-    pub pub_key_y: String,
-    pub address: String,
+    pub_key_y: String,
+    address: String,
+}
+
+impl TorusKey {
+    pub fn derive_public_key_uncompressed(&self) -> Result<[u8; 65]> {
+        let padding_len = 64 - self.pub_key_x.len();
+        let padding = "0".repeat(padding_len);
+        let pub_key_x = format!("{}{}", padding, self.pub_key_x);
+
+        let padding_len = 64 - self.pub_key_y.len();
+        let padding = "0".repeat(padding_len);
+        let pub_key_y = format!("{}{}", padding, self.pub_key_y);
+
+        let pub_key_x: [u8; 32] = hex::decode(pub_key_x)?.as_slice().try_into()?;
+        let pub_key_y: [u8; 32] = hex::decode(pub_key_y)?.as_slice().try_into()?;
+
+        let mut v = Vec::with_capacity(65);
+        v.push(0x04);
+        v.extend_from_slice(pub_key_x.as_slice());
+        v.extend_from_slice(pub_key_y.as_slice());
+        Ok(v.as_slice().try_into()?)
+    }
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -104,7 +125,7 @@ pub mod multi_thread {
     pub async fn lookup_request(
         verifier_id: &'_ str,
         verifier_type: Verifier,
-    ) -> Result<TorusKeys> {
+    ) -> Result<Option<[u8; 65]>> {
         let verifier = match verifier_type {
             Verifier::Twitter => VERIFIER_TWITTER,
             Verifier::Discord => VERIFIER_DISCORD,
@@ -119,7 +140,13 @@ pub mod multi_thread {
           }
         });
 
-        Ok(consensus_multi_thread::rpc_with_consensus(&json_rpc).await?)
+        let torus_keys: TorusKeys = consensus_multi_thread::rpc_with_consensus(&json_rpc).await?;
+        let public_key = torus_keys
+            .keys
+            .first()
+            .map(|f| f.derive_public_key_uncompressed())
+            .transpose()?;
+        Ok(public_key)
     }
     pub async fn key_lookup_request(
         pub_key_x: &[u8; 32],

@@ -99,39 +99,38 @@ async fn rpc_fetch_consensus() {
 
 #[tokio::test]
 async fn id_lookup() {
-    let torus_keys: TorusKeys =
-        multi_thread::lookup_request("twitter|1415723267256639488", Verifier::Twitter)
-            .await
-            .unwrap();
+    let torus_key = multi_thread::lookup_request("twitter|1415723267256639488", Verifier::Twitter)
+        .await
+        .unwrap();
 
-    assert_eq!(torus_keys.keys.len(), 1);
-    assert_eq!(
-        torus_keys.keys[0].pub_key_x,
-        // Note that the hex string does not have the leading zero
-        "436676f1c06a11f805a92d5d02a5789296c562d1aeb8e72d6318760f61cdcbf"
-    );
-    assert_eq!(
-        torus_keys.keys[0].pub_key_y,
-        "afd563755d627d1ae4021d60863acca0c3bf4e5d8f5ce24c91e55ebbf5b263b0"
-    );
+    assert!(torus_key.is_some());
+    assert_eq!(torus_key, Some(hex_literal::hex!("040436676f1c06a11f805a92d5d02a5789296c562d1aeb8e72d6318760f61cdcbfafd563755d627d1ae4021d60863acca0c3bf4e5d8f5ce24c91e55ebbf5b263b0")));
+    // assert_eq!(
+    //     torus_keys.keys[0].pub_key_x,
+    //     // Note that the hex string does not have the leading zero
+    //     "436676f1c06a11f805a92d5d02a5789296c562d1aeb8e72d6318760f61cdcbf"
+    // );
+    // assert_eq!(
+    //     torus_keys.keys[0].pub_key_y,
+    //     "afd563755d627d1ae4021d60863acca0c3bf4e5d8f5ce24c91e55ebbf5b263b0"
+    // );
 }
 #[tokio::test]
 async fn id_lookup_discord() {
-    let torus_keys: TorusKeys =
-        multi_thread::lookup_request("783831719589314610", Verifier::Discord)
-            .await
-            .unwrap();
+    let torus_key = multi_thread::lookup_request("783831719589314610", Verifier::Discord)
+        .await
+        .unwrap();
 
-    assert_eq!(torus_keys.keys.len(), 1);
-    assert_eq!(
-        torus_keys.keys[0].pub_key_x,
-        // Note that the hex string does not have the leading zero
-        "60026de34a9104b819e477bbee95256673f288fe6c116515aa95af1a046a26df"
-    );
-    assert_eq!(
-        torus_keys.keys[0].pub_key_y,
-        "169549acdf77781a2a390bb2379dee7f02aa3a016f5279f65be7b42f016ba445"
-    );
+    assert_eq!(torus_key, Some(hex_literal::hex!("0460026de34a9104b819e477bbee95256673f288fe6c116515aa95af1a046a26df169549acdf77781a2a390bb2379dee7f02aa3a016f5279f65be7b42f016ba445")));
+    // assert_eq!(
+    //     torus_keys.keys[0].pub_key_x,
+    //     // Note that the hex string does not have the leading zero
+    //     "60026de34a9104b819e477bbee95256673f288fe6c116515aa95af1a046a26df"
+    // );
+    // assert_eq!(
+    //     torus_keys.keys[0].pub_key_y,
+    //     "169549acdf77781a2a390bb2379dee7f02aa3a016f5279f65be7b42f016ba445"
+    // );
 }
 
 // #[tokio::test]
