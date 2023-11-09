@@ -116,6 +116,15 @@ async fn id_lookup() {
     // );
 }
 #[tokio::test]
+async fn id_lookup_old_format() {
+    let torus_key = multi_thread::lookup_request("twitter|200985979", Verifier::Twitter)
+        .await
+        .unwrap();
+
+    assert!(torus_key.is_some());
+    assert_eq!(torus_key, Some(hex_literal::hex!("0484a6ad482459e29c7eb9762f9412628e9916c8cdb763b6252bdf9c84fd97da24f23c2c3f771072c345b865e1bb810d4b27339866af90716fb1c21cc97d4d424f")));
+}
+#[tokio::test]
 async fn id_lookup_discord() {
     let torus_key = multi_thread::lookup_request("783831719589314610", Verifier::Discord)
         .await

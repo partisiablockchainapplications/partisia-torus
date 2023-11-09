@@ -14,17 +14,17 @@ mod consensus_single_thread;
 #[cfg(test)]
 mod tests;
 
-// https://github.com/torusresearch/fetch-node-details/blob/master/src/nodeDetailManager.ts
-const TORUS_ENDPOINTS: [&'static str; 9] = [
-    "https://torus-19.torusnode.com/jrpc",
-    "https://torus-node.ens.domains/jrpc",
-    "https://torus-node.matic.network/jrpc",
-    "https://torus.zilliqa.network/jrpc",
-    "https://torus-mainnet.cosmos.network/jrpc",
-    "https://torus2.etherscan.com/jrpc",
-    "https://torus-node-v2.skalelabs.com/jrpc",
-    "https://torus-node.binancex.dev/jrpc",
-    "https://torusnode.ont.io/jrpc",
+// NodeJs
+// import FetchNodeDetails from "@toruslabs/fetch-node-details";
+// const fetchNodeDetails = new FetchNodeDetails({ network: "mainnet" });
+// fetchNodeDetails.getNodeDetails({ verifier: "twitter", verifierId: "partisia-twitter-mainnet" }).then((nodeInfo) => console.log(nodeInfo));
+
+const TORUS_ENDPOINTS: [&'static str; 5] = [
+    "https://sapphire-1.auth.network/sss/mainnet/jrpc",
+    "https://sapphire-2.auth.network/sss/mainnet/jrpc",
+    "https://sapphire-3.auth.network/sss/mainnet/jrpc",
+    "https://sapphire-4.auth.network/sss/mainnet/jrpc",
+    "https://sapphire-5.auth.network/sss/mainnet/jrpc",
 ];
 
 const VERIFIER_TWITTER: &'static str = "partisia-twitter-mainnet";
