@@ -29,6 +29,7 @@ const TORUS_ENDPOINTS: [&'static str; 5] = [
 
 const VERIFIER_TWITTER: &'static str = "partisia-twitter-mainnet";
 const VERIFIER_DISCORD: &'static str = "partisia-discord";
+const VERIFIER_APPLE: &'static str = "parti-apple";
 
 // the consensus results are None if still pending a result from the rpc call
 type ConsensusResults = [Option<Result<Vec<u8>>>; TORUS_ENDPOINTS.len()];
@@ -116,6 +117,7 @@ struct TorusPublicKey {
 pub enum Verifier {
     Twitter,
     Discord,
+    Apple,
 }
 
 #[cfg(feature = "multi_thread")]
@@ -129,6 +131,7 @@ pub mod multi_thread {
         let verifier = match verifier_type {
             Verifier::Twitter => VERIFIER_TWITTER,
             Verifier::Discord => VERIFIER_DISCORD,
+            Verifier::Apple => VERIFIER_APPLE,
         };
         let json_rpc = json!({
           "jsonrpc": "2.0",
@@ -191,6 +194,7 @@ pub mod single_threaded {
         let verifier = match verifier_type {
             Verifier::Twitter => VERIFIER_TWITTER,
             Verifier::Discord => VERIFIER_DISCORD,
+            Verifier::Apple => VERIFIER_APPLE,
         };
         let json_rpc = json!({
           "jsonrpc": "2.0",
